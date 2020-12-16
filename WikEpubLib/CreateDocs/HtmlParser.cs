@@ -9,9 +9,15 @@ using WikEpubLib.Records;
 
 namespace WikEpubLib.CreateDocs
 {
+    /// <summary>
+    /// Removes irrelevant parts of the HTML, and updates src of images to local directory specified in WikiPageRecords.
+    /// </summary>
+    /// <remarks>
+    /// Changes to HTML which are presented by the e-reader occur here. This should be extended to increase compatablity
+    /// with a variety of different Wikipedia pages.
+    /// </remarks>
     public class HtmlParser : IParseHtml
     {
-
         public async Task<(HtmlDocument doc, WikiPageRecord record)> ParseAsync(HtmlDocument htmlDocument, WikiPageRecord wikiPageRecord) =>
             await Task.Run(() => (CreateHtml(htmlDocument, wikiPageRecord), wikiPageRecord) ); 
 
