@@ -5,6 +5,16 @@ using WikEpubLib.Interfaces;
 
 namespace WikEpubLib.Records
 {
+    /// <summary>
+    /// Creates a record for an HTML page.
+    /// </summary>
+    /// <remarks>
+    /// Several relevant bits of information are retrieved from the HTML which are used throughtout the program:
+    ///     - An id for the file is given by the title of the article
+    ///     - For each image in the document a map is created between the its current src value and a new src value 
+    ///       a relative directory in the new epub file
+    ///     - Section headings for each <h2> tag in the document
+    /// </remarks>
     public class GetWikiPageRecords : IGetWikiPageRecords
     {
         public WikiPageRecord From(HtmlDocument html, string imageDirectory)
@@ -30,7 +40,6 @@ namespace WikEpubLib.Records
         private IEnumerable<HtmlNode> GetImageNodesFrom(IEnumerable<HtmlNode> nodes) => nodes.Where(n => n.Name == "img");
 
         private int _imageId = 1;
-        // need to handle svg files too once they are being converted
         private string GetImageId(string originalSrc) => $"image_{_imageId++}.{GetExtension(originalSrc)}";
         private string GetExtension(string originalSrc) => originalSrc switch
         {
@@ -39,7 +48,6 @@ namespace WikEpubLib.Records
             string when originalSrc.Contains("svg") => "svg.png",
             _ => originalSrc.Split('.')[^1] + ".png"    
         };
-        //private string GetImageId() => $"image_{_imageId++}.png";
         private Dictionary<string, string> GetSrcMapFrom(IEnumerable<HtmlNode> imageNodes, string imageDirectory) =>
             imageNodes
             .Select(n => n.GetAttributeValue("src", "null"))
