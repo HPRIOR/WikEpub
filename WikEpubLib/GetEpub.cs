@@ -30,19 +30,36 @@ namespace WikEpubLib
             _htmlInput = htmlInput;
             _epubOutput = epubOutput;
         }
-
-        public async Task FromAsync(IEnumerable<string> urls, string rootDirectory, string bookTitle, Guid folderID)
+        
+        /// <summary>
+        /// Creates an epub from the given urls. 
+        /// </summary>
+        /// <remarks>
+        /// This method makes use of a record created for each html that is given by a url.
+        /// The records contain information from the html needed to create the various files which 
+        /// constitute the epub format. An immutable record is created initially so the data collected can be used 
+        /// accross various parts of the program. For example, the record contains a mapping (src map) for each image.
+        /// This maps the current src of the image to a new local one - this is then used to change the sources of the
+        /// html images to a local directory and also to download the images to the relevant local directory.
+        ///
+        /// A decision was made not to include the the actual html class in the record, and use a tuple instead, 
+        /// because only one of the three document producing classes uses it: when parsing the html, the actual html 
+        /// is needed along with its associated record - see _parseHtml.ParseAsync(doc, record) below. 
+        /// (Possible refactor: include HtmlDocument in record to simplify the calling code)
+        /// </remarks>
+        /// <param name="urls"></param>
+        /// <param name="rootDirectory">Path in which the book will be created</param>
+        /// <param name="bookTitle">Name of the book</param>
+        /// <param name="guid">Unique identifier for the folder</param>
+        /// <returns></returns>
+        public async Task FromAsync(IEnumerable<string> urls, string rootDirectory, string bookTitle, Guid guid)
         {
             Task<HtmlDocument[]> initialHtmlDocs = _htmlInput.GetHtmlDocumentsFromAsync(urls, new HtmlWeb());
 
-            var directoryPaths = GetDirectoryContext(rootDirectory, folderID);
+            var directoryPaths = GetDirectoryContext(rootDirectory, guid);
             Task createDirectories = _epubOutput.CreateDirectoriesAsync(directoryPaths);
 
-            // Associate html document with its records.
-            // The records contain information from the html needed to create the various files which 
-            // constitute the epub format. A decision was made not to include the the actual html class in the 
-            // record, and use a tuple instead, becuase only one of the three document producing classes uses it:
-            // see getParsedDocument below. (Possible refactor: include HtmlDocument to simplify the calling code)
+            //Associate html document with its records.
             List<(HtmlDocument doc, WikiPageRecord record)> htmlRecordTuple =
                (await initialHtmlDocs).Select(doc => (doc, _getRecords.From(doc, "image_repo"))).ToList();
             var pageRecords = htmlRecordTuple.Select(t => t.record);
@@ -58,7 +75,7 @@ namespace WikEpubLib
             Task saveXml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await xmlDocs));
             Task saveHtml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await parsedDocuments));
             Task.WaitAll(saveXml, saveHtml, createMime, downloadImages);
-            await _epubOutput.ZipFiles(directoryPaths, folderID);
+            await _epubOutput.ZipFiles(directoryPaths, guid);
         }
 
         private Dictionary<Directories, string> GetDirectoryContext(string rootDir, Guid folderId) => new Dictionary<Directories, string> {
