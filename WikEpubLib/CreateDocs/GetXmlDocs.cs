@@ -7,6 +7,9 @@ using WikEpubLib.Records;
 
 namespace WikEpubLib.CreateDocs
 {
+    /// <summary>
+    /// Wrapper class which gets all the xml files for the epub format (content, contianer, toc).
+    /// </summary>
     public class GetXmlDocs : IGetXmlDocs
     {
         private readonly IGetTocXml _getTocXml;
@@ -20,6 +23,15 @@ namespace WikEpubLib.CreateDocs
             _getContainerXml = getContainerXml;
         }
 
+        /// <summary>
+        /// Returns tuple of xml type and document
+        /// </summary>
+        /// <remarks>
+        /// The type is used elsewhere to determine the directory of the XML path 
+        /// </remarks>
+        /// <param name="pageRecords"></param>
+        /// <param name="bookTitle"></param>
+        /// <returns>IEnumberable of Task<tuples>: type of xml file which is used by saving functons elsewhere to determine the directory of the file, and the actual document </returns>
         public IEnumerable<Task<(XmlType type, XDocument doc)>> From(IEnumerable<WikiPageRecord> pageRecords, string bookTitle) =>
             new List<Task<(XmlType type, XDocument doc)>>()
             {
