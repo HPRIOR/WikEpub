@@ -9,6 +9,10 @@ using WikEpubLib.Records;
 
 namespace WikEpubLib
 {
+    /// <summary>
+    /// Main class of the library. It coordinates the various classes of the library and creates an epub 
+    /// file in a specified directory.
+    /// </summary>
     public class GetEpub : IHtmlsToEpub
     {
         private readonly IHtmlInput _htmlInput;
@@ -29,25 +33,32 @@ namespace WikEpubLib
 
         public async Task FromAsync(IEnumerable<string> urls, string rootDirectory, string bookTitle, Guid folderID)
         {
-            Task<HtmlDocument[]> initialDocs = _htmlInput.GetHtmlDocumentsFromAsync(urls, new HtmlWeb());
+            Task<HtmlDocument[]> initialHtmlDocs = _htmlInput.GetHtmlDocumentsFromAsync(urls, new HtmlWeb());
 
-            var directories = GetDirectoryContext(rootDirectory, folderID);
-            Task createDirectories = _epubOutput.CreateDirectoriesAsync(directories);
+            var directoryPaths = GetDirectoryContext(rootDirectory, folderID);
+            Task createDirectories = _epubOutput.CreateDirectoriesAsync(directoryPaths);
 
+            // Associate html document with its records.
+            // The records contain information from the html needed to create the various files which 
+            // constitute the epub format. A decision was made not to include the the actual html class in the 
+            // record, and use a tuple instead, becuase only one of the three document producing classes uses it:
+            // see getParsedDocument below. (Possible refactor: include HtmlDocument to simplify the calling code)
             List<(HtmlDocument doc, WikiPageRecord record)> htmlRecordTuple =
-               (await initialDocs).Select(doc => (doc, _getRecords.From(doc, "image_repo"))).ToList();
-
+               (await initialHtmlDocs).Select(doc => (doc, _getRecords.From(doc, "image_repo"))).ToList();
             var pageRecords = htmlRecordTuple.Select(t => t.record);
-            Task downloadImages = Task.WhenAll(pageRecords.SelectMany(record => _epubOutput.DownLoadImages(record, directories)));
-            var getXmlDocs = Task.WhenAll(_getXmlDocs.From(pageRecords, bookTitle));
-            var getParsedDocuments = Task.WhenAll(htmlRecordTuple.Select(t => (_parseHtml.ParseAsync(t.doc, t.record))));
 
+            // Use the tuples to produce the files needed to create the epub document: images + xml
+            Task downloadImages = Task.WhenAll(pageRecords.SelectMany(record => _epubOutput.DownLoadImages(record, directoryPaths)));
+            var xmlDocs = Task.WhenAll(_getXmlDocs.From(pageRecords, bookTitle));
+            var parsedDocuments = Task.WhenAll(htmlRecordTuple.Select(t => (_parseHtml.ParseAsync(t.doc, t.record))));
+
+            // Save the produced files to relevant directory and compress them
             await createDirectories;
-            Task createMime = _epubOutput.CreateMimeFile(directories);
-            Task saveXml = _epubOutput.SaveDocumentsAsync(directories, (await getXmlDocs));
-            Task saveHtml = _epubOutput.SaveDocumentsAsync(directories, (await getParsedDocuments));
+            Task createMime = _epubOutput.CreateMimeFile(directoryPaths);
+            Task saveXml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await xmlDocs));
+            Task saveHtml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await parsedDocuments));
             Task.WaitAll(saveXml, saveHtml, createMime, downloadImages);
-            await _epubOutput.ZipFiles(directories, folderID);
+            await _epubOutput.ZipFiles(directoryPaths, folderID);
         }
 
         private Dictionary<Directories, string> GetDirectoryContext(string rootDir, Guid folderId) => new Dictionary<Directories, string> {
