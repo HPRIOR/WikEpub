@@ -60,12 +60,12 @@ namespace WikEpubLib.CreateDocs
                 .ToList()
                 .ForEach(n => { 
                     if (!n.ParentNode.HasClass("mw-ref") & n.HasChildNodes && n.FirstChild.Name != "img") ReplaceNode(n);
-                    ChangeReferenceLink(n);
+                    ChangeHrefLink(n);
                 });
 
         }
 
-        private void ChangeReferenceLink(HtmlNode node)
+        private void ChangeHrefLink(HtmlNode node)
         {
             var oldHref = node.GetAttributeValue("href", "null");
             if (oldHref != "null")
@@ -78,6 +78,11 @@ namespace WikEpubLib.CreateDocs
             node.ParentNode.ReplaceChild(newNode, node);
         }
         
+        /// <summary>
+        ///  Uses the src map provided by a WikiPageRecord to change the old img src to new relative local directory.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="srcMap">old src url --> local relative directory</param>
         private void ChangeDownloadLinks(HtmlNode node, Dictionary<string, string> srcMap)
         {
             var imgNodes = node.Descendants("img");
