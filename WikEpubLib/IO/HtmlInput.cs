@@ -7,6 +7,13 @@ using WikEpubLib.Exceptions;
 
 namespace WikEpubLib.IO
 {
+    /// <summary>
+    /// Retrieves html from the given urls.
+    /// </summary>
+    /// <remarks>
+    /// Converts urls into API calls and is used to validate the incoming urls (for matches in the Regex and uniqueness)
+    /// Unique urls is an arbitrary constaint caused by clashes (and errors thrown) in the file system if two of the same urls are processed. (TODO)
+    /// </remarks>
     public class HtmlInput : IHtmlInput
     {
         public async Task<HtmlDocument[]> GetHtmlDocumentsFromAsync(IEnumerable<string> urls, HtmlWeb htmlWeb)
