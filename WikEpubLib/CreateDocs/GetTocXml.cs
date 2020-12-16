@@ -7,6 +7,14 @@ using WikEpubLib.Records;
 
 namespace WikEpubLib.CreateDocs
 {
+    /// <summary>
+    /// Creates toc file required for epub format.
+    /// </summary>
+    /// <remarks>
+    /// Toc file creates chapters which can be selected by the e-reader. Each Html is treated as a book, and its
+    /// section headings (h2 tags) are treated as chapters. Each chapter is given by the html file path appended by 
+    /// #[element_id]. This is given by the WikiPageRecord property: SectionHeadings
+    /// </remarks>
     public class GetTocXml : IGetTocXml
     {
         public async Task<(XmlType, XDocument)> From(IEnumerable<WikiPageRecord> pageRecords, string bookTitle)
