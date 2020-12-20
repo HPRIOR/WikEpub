@@ -22,6 +22,7 @@ namespace WikEpubLib.IO
                 return await Task.WhenAll(urls.Select(url => htmlWeb.LoadFromWebAsync(TranslateToApiCall(url))));
             throw new InvalidWikiUrlException(urls);
         }
+
         private string TranslateToApiCall(string url) =>
             $@"https://en.wikipedia.org/api/rest_v1/page/html/{url.Split('/').Last()}";
 
@@ -33,6 +34,7 @@ namespace WikEpubLib.IO
                     return false;
             return true;
         }
+
         private bool UrlsAreUnique(IEnumerable<string> urls) => urls.ToHashSet().Count == urls.Count();
     }
 }

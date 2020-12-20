@@ -10,7 +10,7 @@ using WikEpubLib.Records;
 namespace WikEpubLib
 {
     /// <summary>
-    /// Main class of the library. It coordinates the various classes of the library and creates an epub 
+    /// Main class of the library. It coordinates the various classes of the library and creates an epub
     /// file in a specified directory.
     /// </summary>
     public class GetEpub : IHtmlsToEpub
@@ -30,21 +30,21 @@ namespace WikEpubLib
             _htmlInput = htmlInput;
             _epubOutput = epubOutput;
         }
-        
+
         /// <summary>
-        /// Creates an epub from the given urls. 
+        /// Creates an epub from the given urls.
         /// </summary>
         /// <remarks>
         /// This method makes use of a record created for each html that is given by a url.
-        /// The records contain information from the html needed to create the various files which 
-        /// constitute the epub format. An immutable record is created initially so the data collected can be used 
+        /// The records contain information from the html needed to create the various files which
+        /// constitute the epub format. An immutable record is created initially so the data collected can be used
         /// accross various parts of the program. For example, the record contains a mapping (src map) for each image.
         /// This maps the current src of the image to a new local one - this is then used to change the sources of the
         /// html images to a local directory and also to download the images to the relevant local directory.
         ///
-        /// A decision was made not to include the the actual html class in the record, and use a tuple instead, 
-        /// because only one of the three document producing classes uses it: when parsing the html, the actual html 
-        /// is needed along with its associated record - see _parseHtml.ParseAsync(doc, record) below. 
+        /// A decision was made not to include the the actual html class in the record, and use a tuple instead,
+        /// because only one of the three document producing classes uses it: when parsing the html, the actual html
+        /// is needed along with its associated record - see _parseHtml.ParseAsync(doc, record) below.
         /// (Possible refactor: include HtmlDocument in record to simplify the calling code)
         /// </remarks>
         /// <param name="urls"></param>

@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using WikEpub.Models;
-using Microsoft.AspNetCore.Http;
-using WikEpubLib.Interfaces;
-using WikEpubLib;
-using Microsoft.AspNetCore.Authorization;
 using WikEpub.Services;
+using WikEpubLib.Interfaces;
 
 namespace WikEpub.Controllers
 {
@@ -30,15 +26,13 @@ namespace WikEpub.Controllers
             _webHostEnvironment = webHostEnv;
             _getEpub = getEpub;
             //_downloadRoot = $@"{_webHostEnvironment.ContentRootPath}\Downloads\";
-            _downloadRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "Downloads"); 
+            _downloadRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "Downloads");
             _fileManagerService = fileManagerService;
         }
-        
-        
+
         [HttpGet, Route("")]
         public IActionResult CreateEpub() => View();
-        
-        
+
         [HttpPost, Route("")]
         public async Task<IActionResult> CreateEpub(EpubFile epubFile)
         {
@@ -55,6 +49,7 @@ namespace WikEpub.Controllers
             }
             return Redirect("/ConversionFail");
         }
+
         public async Task<bool> GetEpub(EpubFile EpubFile)
         {
             await _getEpub.FromAsync(EpubFile.WikiPages, _downloadRoot, EpubFile.BookTitle, EpubFile.guid);
@@ -84,7 +79,7 @@ namespace WikEpub.Controllers
             await ClearEpubFile(epubFile.FilePath);
             return RedirectToAction("CreateEpub");
         }
-        
+
         public async Task ClearEpubFile(string filePath) =>
             await Task.Run(() =>
             {
@@ -92,8 +87,6 @@ namespace WikEpub.Controllers
                     System.IO.File.Delete(filePath);
             });
 
-       
-       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() =>
              View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

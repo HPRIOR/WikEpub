@@ -10,11 +10,11 @@ using WikEpubLib.Records;
 namespace WikEpubLib.CreateDocs
 {
     /// <summary>
-    /// Creates the content file required by the epub format. 
+    /// Creates the content file required by the epub format.
     /// </summary>
     /// <remarks>
-    /// The content file uniquly identifies the contents of the epub file, such as the html page, and the images, 
-    /// and contains information regarding their relative directories, and media-type. 
+    /// The content file uniquly identifies the contents of the epub file, such as the html page, and the images,
+    /// and contains information regarding their relative directories, and media-type.
     /// </remarks>
     public class GetContentXml : IGetContentXml
     {

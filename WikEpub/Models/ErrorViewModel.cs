@@ -1,5 +1,3 @@
-using System;
-
 namespace WikEpub.Models
 {
     public class ErrorViewModel

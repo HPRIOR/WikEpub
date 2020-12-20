@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WikEpubLib.Records;
 
 namespace WikEpubLibTests
@@ -33,7 +32,7 @@ namespace WikEpubLibTests
             seanRecord = GetWikiPageRecords.From(seanWikiDoc, imageDir);
             physioRecord = GetWikiPageRecords.From(physioWikiDoc, imageDir);
             physiologyRecord = GetWikiPageRecords.From(physiologyWikiDoc, imageDir);
-            paperRecord =  GetWikiPageRecords.From(paperWikiDoc, imageDir);
+            paperRecord = GetWikiPageRecords.From(paperWikiDoc, imageDir);
             markLawrenceRecord = GetWikiPageRecords.From(markWikiDoc, imageDir);
 
             wikiPages = new() { seanRecord, physioRecord, physiologyRecord, paperRecord, markLawrenceRecord };
@@ -52,7 +51,6 @@ namespace WikEpubLibTests
             Assert.AreEqual("Page_paper", paperRecord.Id);
         }
 
-       
         [TestMethod]
         public void Src_Dict_Value_Starts_With_Correct_Value()
         {
@@ -93,6 +91,7 @@ namespace WikEpubLibTests
                 }
             });
         }
+
         [TestMethod]
         public void Access_Record_Multiple_Times_Same_Values_Src()
         {
@@ -100,7 +99,6 @@ namespace WikEpubLibTests
             var t2 = seanRecord.SrcMap.Select(v => v.Value);
 
             t1.Zip(t2).ToList().ForEach(t => Assert.AreEqual(t.First, t.Second));
-
         }
     }
 }

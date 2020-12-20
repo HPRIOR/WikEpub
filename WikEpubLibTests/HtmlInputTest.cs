@@ -1,26 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WikEpubLib.IO;
+﻿using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HtmlAgilityPack;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WikEpubLib.Exceptions;
+using WikEpubLib.IO;
 
 namespace WikEpubLibTests
 {
     [TestClass]
     public class HtmlInputTest
     {
-        HtmlWeb htmlWeb;
-        HtmlInput htmlInput;
+        private HtmlWeb htmlWeb;
+        private HtmlInput htmlInput;
+
         [TestInitialize]
         public void Init()
         {
             htmlInput = new HtmlInput();
             htmlWeb = new HtmlWeb();
         }
+
         [TestMethod]
         public async Task Valid_Url_Does_Not_Throw_Exception()
         {
@@ -32,7 +31,7 @@ namespace WikEpubLibTests
             };
             await htmlInput.GetHtmlDocumentsFromAsync(validUrls, htmlWeb);
         }
-        
+
         [TestMethod]
         public async Task Url_Throws_Exception_No_Title()
         {

@@ -1,8 +1,6 @@
 ﻿using HtmlAgilityPack;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WikEpubLib.Interfaces;
 using WikEpubLib.Records;
@@ -19,7 +17,7 @@ namespace WikEpubLib.CreateDocs
     public class HtmlParser : IParseHtml
     {
         public async Task<(HtmlDocument doc, WikiPageRecord record)> ParseAsync(HtmlDocument htmlDocument, WikiPageRecord wikiPageRecord) =>
-            await Task.Run(() => (CreateHtml(htmlDocument, wikiPageRecord), wikiPageRecord) ); 
+            await Task.Run(() => (CreateHtml(htmlDocument, wikiPageRecord), wikiPageRecord));
 
         public HtmlDocument CreateHtml(HtmlDocument inputDocument, WikiPageRecord wikiPageRecord)
         {
@@ -30,7 +28,7 @@ namespace WikEpubLib.CreateDocs
             var bodyNode = newDocument.DocumentNode.SelectSingleNode("/html/body");
 
             bool nodePredicate(HtmlNode node) => node.Name != "style"
-                && !(node.Name == "style" || 
+                && !(node.Name == "style" ||
                 node.Descendants().Any(d => d.Attributes.Any(a => a.Value == "navigation" | a.Value == "vertical-navbox nowraplinks hlist")));
 
             var childNodes = inputDocument
@@ -47,22 +45,22 @@ namespace WikEpubLib.CreateDocs
                     bodyNode.AppendChild(node);
                 }
             });
-            
+
             return newDocument;
         }
 
         private void ChangeHyperLinks(HtmlNode node)
         {
-            if(node.Name == "a" && !node.ParentNode.HasClass("mw-ref"))
+            if (node.Name == "a" && !node.ParentNode.HasClass("mw-ref"))
                 ReplaceNode(node);
             node.Descendants("a")
                 .AsParallel()
                 .ToList()
-                .ForEach(n => { 
+                .ForEach(n =>
+                {
                     if (!n.ParentNode.HasClass("mw-ref") & n.HasChildNodes && n.FirstChild.Name != "img") ReplaceNode(n);
                     ChangeHrefLink(n);
                 });
-
         }
 
         private void ChangeHrefLink(HtmlNode node)
@@ -77,7 +75,7 @@ namespace WikEpubLib.CreateDocs
             HtmlNode newNode = HtmlNode.CreateNode($"<span>{node.InnerText}</span>");
             node.ParentNode.ReplaceChild(newNode, node);
         }
-        
+
         /// <summary>
         ///  Uses the src map provided by a WikiPageRecord to change the old img src to new relative local directory.
         /// </summary>
@@ -95,6 +93,5 @@ namespace WikEpubLib.CreateDocs
                     imgNode.SetAttributeValue("src", srcMap[oldSrcValue]);
             });
         }
-
     }
 }

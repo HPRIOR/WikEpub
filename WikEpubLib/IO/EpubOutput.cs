@@ -15,7 +15,7 @@ using WikEpubLib.Records;
 namespace WikEpubLib.IO
 {
     /// <summary>
-    /// Handles output functions of the library: creating directories, saving files to directories 
+    /// Handles output functions of the library: creating directories, saving files to directories
     /// </summary>
     public class EpubOutput : IEpubOutput
     {
@@ -25,8 +25,9 @@ namespace WikEpubLib.IO
         {
             _httpClient = httpClient;
         }
+
         /// <summary>
-        /// Uses context (Dictionary: enum -> directory path) shared accross program to create directories 
+        /// Uses context (Dictionary: enum -> directory path) shared accross program to create directories
         /// </summary>
         public async Task CreateDirectoriesAsync(Dictionary<Directories, string> directories) =>
             await Task.Run(() =>
@@ -36,8 +37,8 @@ namespace WikEpubLib.IO
                 Directory.CreateDirectory(directories[Directories.IMAGES]);
             });
 
-         public async Task CreateMimeFile(Dictionary<Directories, string> directories) =>
-            await File.WriteAllTextAsync($@"{directories[Directories.BOOKDIR]}\mimetype", "application/epub+zip");
+        public async Task CreateMimeFile(Dictionary<Directories, string> directories) =>
+           await File.WriteAllTextAsync($@"{directories[Directories.BOOKDIR]}\mimetype", "application/epub+zip");
 
         /// <summary>
         /// Downloads each image from the html file, and saves it to the source specified in the records src mapping.
@@ -56,7 +57,7 @@ namespace WikEpubLib.IO
                     _ when src.Key.StartsWith("https://") => src.Key,
                     _ when src.Key.StartsWith(@"/api") => $"https://en.wikipedia.org{src.Key}",
                     _ when src.Key.StartsWith(@"//") => @$"https:{src.Key}",
-                    _ => "unknown" 
+                    _ => "unknown"
                 };
                 if (srcKey == "unknown")
                 {
@@ -70,7 +71,7 @@ namespace WikEpubLib.IO
             });
 
         /// <summary>
-        /// Saves documents to specied directory depending on the type of file 
+        /// Saves documents to specied directory depending on the type of file
         /// </summary>
         /// <param name="directories"></param>
         /// <param name="xmlDocs"></param>
@@ -96,7 +97,6 @@ namespace WikEpubLib.IO
             IEnumerable<(HtmlDocument doc, WikiPageRecord record)> htmlDocs) =>
             await Task.WhenAll(htmlDocs.Select(t => SaveTaskAsync(t.doc, directories[Directories.OEBPS], $"{t.record.Id}.html")));
 
-       
         private async Task SaveTaskAsync(XDocument file, string toDirectory, string withFileName)
         {
             await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
@@ -117,6 +117,5 @@ namespace WikEpubLib.IO
                     @$"{directories[Directories.BOOKDIR]}.epub");
                 Directory.Delete(directories[Directories.BOOKDIR], true);
             });
-
     }
 }

@@ -27,7 +27,7 @@ namespace WikEpubLib.CreateDocs
         /// Returns tuple of xml type and document
         /// </summary>
         /// <remarks>
-        /// The type is used elsewhere to determine the directory of the XML path 
+        /// The type is used elsewhere to determine the directory of the XML path
         /// </remarks>
         /// <param name="pageRecords"></param>
         /// <param name="bookTitle"></param>

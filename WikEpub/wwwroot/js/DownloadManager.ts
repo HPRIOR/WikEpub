@@ -42,7 +42,7 @@ export class DownloadPageManager {
     private AddNewInputNode(): void {
         let newNode = this.inputManager.insertInput(); // side-effect on DOM
         if (newNode !== null) {
-            this.addButton.setAttribute("class",  "add-remove-btn add-remove-btn-active");
+            this.addButton.setAttribute("class", "add-remove-btn add-remove-btn-active");
             this.inputValidator.AddNode(newNode);
             newNode.addEventListener('change', async () => {
                 await this.inputValidator.CheckNodeOnChange((newNode as HTMLElement).querySelector('input'))
@@ -53,7 +53,6 @@ export class DownloadPageManager {
         else {
             this.addButton.setAttribute("class", "add-remove-btn add-remove-btn-inactive");
             this.removeButton.setAttribute("class", "add-remove-btn add-remove-btn-active");
-
         }
     }
 
@@ -97,7 +96,6 @@ export class DownloadPageManager {
             else {
                 spanElement.textContent = '\u2718';
                 spanElement.setAttribute("title", reason);
-
             }
         }
     }
