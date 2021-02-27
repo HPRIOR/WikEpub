@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WikEpubLib.CreateDocs;
 using WikEpubLib.Enums;
 using WikEpubLib.Interfaces;
 using WikEpubLib.Records;
@@ -16,15 +17,13 @@ namespace WikEpubLib
     public class GetEpub : IHtmlsToEpub
     {
         private readonly IHtmlInput _htmlInput;
-        private readonly IParseHtml _parseHtml;
         private readonly IGetWikiPageRecords _getRecords;
-        private readonly ICreateXmlDocs _getXmlDocs;
+        private readonly IDocumentCreator _getXmlDocs;
         private readonly IEpubOutput _epubOutput;
 
-        public GetEpub(IParseHtml parseHtml, IGetWikiPageRecords getRecords,
-            ICreateXmlDocs getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
+        public GetEpub(IGetWikiPageRecords getRecords,
+            IDocumentCreator getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
         {
-            _parseHtml = parseHtml;
             _getRecords = getRecords;
             _getXmlDocs = getXmlDocs;
             _htmlInput = htmlInput;
@@ -41,11 +40,6 @@ namespace WikEpubLib
         /// accross various parts of the program. For example, the record contains a mapping (src map) for each image.
         /// This maps the current src of the image to a new local one - this is then used to change the sources of the
         /// html images to a local directory and also to download the images to the relevant local directory.
-        ///
-        /// A decision was made not to include the the actual html class in the record, and use a tuple instead,
-        /// because only one of the three document producing classes uses it: when parsing the html, the actual html
-        /// is needed along with its associated record - see _parseHtml.ParseAsync(doc, record) below.
-        /// (Possible refactor: include HtmlDocument in record to simplify the calling code)
         /// </remarks>
         /// <param name="urls"></param>
         /// <param name="rootDirectory">Path in which the book will be created</param>
@@ -64,15 +58,14 @@ namespace WikEpubLib
 
             var downloadImagesTask = 
                 Task.WhenAll(initialHtmlRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
-            var xmlDocs = Task.WhenAll(_getXmlDocs.From(initialHtmlRecords, bookTitle));
-            var updateHtmlInWikiRecordsTask = Task.WhenAll(initialHtmlRecords.Select(record => _parseHtml.ParseAsync(record)));
+
+            var createDocsTask = Task.WhenAll(_getXmlDocs.From(initialHtmlRecords, bookTitle, directoryPaths));
 
             // Save the produced files to relevant directory and compress them
             await createDirectoriesTask;
-            Task createMime = _epubOutput.CreateMimeFile(directoryPaths);
-            Task saveXml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await xmlDocs));
-            Task saveHtml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await updateHtmlInWikiRecordsTask));
-            Task.WaitAll(saveXml, saveHtml, createMime, downloadImagesTask);
+            var saveDocumentsTask = DocumentSaver.Save(await createDocsTask);
+            var createMimeTask = _epubOutput.CreateMimeFile(directoryPaths);
+            Task.WaitAll(saveDocumentsTask, createMimeTask, downloadImagesTask);
             await _epubOutput.ZipFiles(directoryPaths, guid);
         }
 
