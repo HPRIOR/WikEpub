@@ -10,13 +10,13 @@ namespace WikEpubLib.CreateDocs
     /// <summary>
     /// Wrapper class which gets all the xml files for the epub format (content, contianer, toc).
     /// </summary>
-    public class GetXmlDocs : IGetXmlDocs
+    public class CreateXmlDocs : ICreateXmlDocs
     {
         private readonly IGetTocXml _getTocXml;
         private readonly IGetContentXml _getContentXml;
         private readonly IGetContainerXml _getContainerXml;
 
-        public GetXmlDocs(IGetTocXml getTocXml, IGetContentXml getContentXml, IGetContainerXml getContainerXml)
+        public CreateXmlDocs(IGetTocXml getTocXml, IGetContentXml getContentXml, IGetContainerXml getContainerXml)
         {
             _getTocXml = getTocXml;
             _getContentXml = getContentXml;

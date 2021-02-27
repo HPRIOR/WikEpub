@@ -6,7 +6,7 @@ using WikEpubLib.Records;
 
 namespace WikEpubLib
 {
-    public interface IGetXmlDocs
+    public interface ICreateXmlDocs
     {
         IEnumerable<Task<(XmlType type, XDocument doc)>> From(IEnumerable<WikiPageRecord> pageRecords, string bookTitle);
     }

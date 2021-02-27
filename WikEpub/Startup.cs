@@ -33,7 +33,7 @@ namespace WikEpub
                 .AddScoped<IHtmlInput, HtmlInput>()
                 .AddScoped<IParseHtml, HtmlParser>()
                 .AddScoped<IGetWikiPageRecords, GetWikiPageRecords>()
-                .AddScoped<IGetXmlDocs, GetXmlDocs>()
+                .AddScoped<ICreateXmlDocs, CreateXmlDocs>()
                 .AddScoped<IEpubOutput, EpubOutput>()
                 .AddScoped<IHtmlsToEpub, GetEpub>();
 
