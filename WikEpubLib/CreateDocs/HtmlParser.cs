@@ -16,10 +16,17 @@ namespace WikEpubLib.CreateDocs
     /// </remarks>
     public class HtmlParser : IParseHtml
     {
-        public async Task<(HtmlDocument doc, WikiPageRecord record)> ParseAsync(HtmlDocument htmlDocument, WikiPageRecord wikiPageRecord) =>
-            await Task.Run(() => (CreateHtml(htmlDocument, wikiPageRecord), wikiPageRecord));
+        public async Task<WikiPageRecord> ParseAsync(WikiPageRecord wikiPageRecord) { 
+        
+            return await Task.Run(() =>
+            {
+                var epubHtml = CreateHtml(wikiPageRecord);
+                return wikiPageRecord with { htmlDoc = epubHtml };
+                
+            });
+        }
 
-        public HtmlDocument CreateHtml(HtmlDocument inputDocument, WikiPageRecord wikiPageRecord)
+        public HtmlDocument CreateHtml(WikiPageRecord wikiPageRecord)
         {
             HtmlDocument newDocument = new HtmlDocument();
             var initNode =
@@ -31,7 +38,7 @@ namespace WikEpubLib.CreateDocs
                 && !(node.Name == "style" ||
                 node.Descendants().Any(d => d.Attributes.Any(a => a.Value == "navigation" | a.Value == "vertical-navbox nowraplinks hlist")));
 
-            var childNodes = inputDocument
+            var childNodes = wikiPageRecord.htmlDoc
                 .DocumentNode
                 .SelectSingleNode("//html/body")
                 .ChildNodes;
