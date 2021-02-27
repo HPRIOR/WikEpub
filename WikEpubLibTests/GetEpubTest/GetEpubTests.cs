@@ -25,11 +25,10 @@ namespace WikEpubLibTests
                 File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\htmlString.txt");
             var mockHtmlInput = new MockHtmlInput(htmlString);
 
-            var htmlParser = new HtmlParser();
             var getRecords = new GetWikiPageRecords();
-            var getXmlDocument = new CreateXmlDocs(new GetTocXml(), new GetContentXml(), new GetContainerXml());
+            var getXmlDocument = new DocumentCreator(new GetTocXml(), new GetContentXml(), new GetContainerXml(), new CreateEpubHtml());
             var epubOut = new EpubOutput(new System.Net.Http.HttpClient());
-            _getEpub = new GetEpub(htmlParser, getRecords, getXmlDocument, mockHtmlInput, epubOut);
+            _getEpub = new GetEpub(getRecords, getXmlDocument, mockHtmlInput, epubOut);
             await createTestBook();
         }
 
