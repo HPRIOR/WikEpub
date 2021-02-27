@@ -24,6 +24,7 @@ namespace WikEpubLib.Records
             IEnumerable<HtmlNode> imgNodes = GetImageNodesFrom(contentNodes);
             return new WikiPageRecord
             {
+                htmlDoc = html,
                 Id = GetIdFrom(allNodes),
                 SrcMap = imgNodes.Any() ? GetSrcMapFrom(imgNodes, imageDirectory) : null,
                 SectionHeadings = GetSectionHeadingsFrom(contentNodes)
