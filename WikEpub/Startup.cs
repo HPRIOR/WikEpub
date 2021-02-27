@@ -27,13 +27,13 @@ namespace WikEpub
         {
             services
                 .AddSingleton<HttpClient>()
-                .AddScoped<IGetTocXml, GetTocXml>()
-                .AddScoped<IGetContentXml, GetContentXml>()
-                .AddScoped<IGetContainerXml, GetContainerXml>()
+                .AddScoped<ITocDocCreator, GetTocXml>()
+                .AddScoped<IContentDocCreator, GetContentXml>()
+                .AddScoped<IContainerDocCreator, GetContainerXml>()
                 .AddScoped<IHtmlInput, HtmlInput>()
-                .AddScoped<IParseHtml, HtmlParser>()
+                .AddScoped<IEpubHtmlCreator, CreateEpubHtml>()
                 .AddScoped<IGetWikiPageRecords, GetWikiPageRecords>()
-                .AddScoped<ICreateXmlDocs, CreateXmlDocs>()
+                .AddScoped<IDocumentCreator, DocumentCreator>()
                 .AddScoped<IEpubOutput, EpubOutput>()
                 .AddScoped<IHtmlsToEpub, GetEpub>();
 
