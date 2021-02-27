@@ -49,24 +49,28 @@ namespace WikEpubLib.IO
         /// If an unknown src is encountered, no image is downloaded and it is written out to the console.
         /// </remarks>
         /// <returns>Task which represents a completed download for each image in a record</returns>
-        public IEnumerable<Task> DownLoadImages(WikiPageRecord pageRecord, Dictionary<Directories, string> directories) =>
-            pageRecord.SrcMap.AsParallel().WithDegreeOfParallelism(10).Select(async src =>
+        public IEnumerable<Task> DownloadImages(WikiPageRecord pageRecord, Dictionary<Directories, string> directories) =>
+            pageRecord
+            .SrcMap
+            .AsParallel()
+            .WithDegreeOfParallelism(10)
+            .Select(async imgSrc =>
             {
-                var srcKey = src.Key switch
+                var srcKey = imgSrc.Key switch
                 {
-                    _ when src.Key.StartsWith("https://") => src.Key,
-                    _ when src.Key.StartsWith(@"/api") => $"https://en.wikipedia.org{src.Key}",
-                    _ when src.Key.StartsWith(@"//") => @$"https:{src.Key}",
+                    _ when imgSrc.Key.StartsWith("https://") => imgSrc.Key,
+                    _ when imgSrc.Key.StartsWith(@"/api") => $"https://en.wikipedia.org{imgSrc.Key}",
+                    _ when imgSrc.Key.StartsWith(@"//") => @$"https:{imgSrc.Key}",
                     _ => "unknown"
                 };
                 if (srcKey == "unknown")
                 {
-                    Debug.WriteLine($"Unknown image href encountered in {pageRecord.Id} wiki: \n" + src.Key);
+                    Debug.WriteLine($"Unknown image href encountered in {pageRecord.Id} wiki: \n" + imgSrc.Key);
                     return;
                 }
                 HttpResponseMessage response = await _httpClient.GetAsync(srcKey);
                 using var memoryStream = await response.Content.ReadAsStreamAsync();
-                await using var fileStream = File.Create($@"{directories[Directories.OEBPS]}\{src.Value}");
+                await using var fileStream = File.Create($@"{directories[Directories.OEBPS]}\{imgSrc.Value}");
                 await memoryStream.CopyToAsync(fileStream);
             });
 
