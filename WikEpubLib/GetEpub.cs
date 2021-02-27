@@ -18,11 +18,11 @@ namespace WikEpubLib
         private readonly IHtmlInput _htmlInput;
         private readonly IParseHtml _parseHtml;
         private readonly IGetWikiPageRecords _getRecords;
-        private readonly IGetXmlDocs _getXmlDocs;
+        private readonly ICreateXmlDocs _getXmlDocs;
         private readonly IEpubOutput _epubOutput;
 
         public GetEpub(IParseHtml parseHtml, IGetWikiPageRecords getRecords,
-            IGetXmlDocs getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
+            ICreateXmlDocs getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
         {
             _parseHtml = parseHtml;
             _getRecords = getRecords;
@@ -62,16 +62,16 @@ namespace WikEpubLib
             var initialHtmlRecords =
                (await getHtmlDocsTask).Select(doc => _getRecords.From(doc, "image_repo")).ToList();
 
-            // Use the tuples to produce the files needed to create the epub document: images + xml
-            var downloadImagesTask = Task.WhenAll(initialHtmlRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
+            var downloadImagesTask = 
+                Task.WhenAll(initialHtmlRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
             var xmlDocs = Task.WhenAll(_getXmlDocs.From(initialHtmlRecords, bookTitle));
-            var updateWikiPageRecordsTask = Task.WhenAll(initialHtmlRecords.Select(record => _parseHtml.ParseAsync(record)));
+            var updateHtmlInWikiRecordsTask = Task.WhenAll(initialHtmlRecords.Select(record => _parseHtml.ParseAsync(record)));
 
             // Save the produced files to relevant directory and compress them
             await createDirectoriesTask;
             Task createMime = _epubOutput.CreateMimeFile(directoryPaths);
             Task saveXml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await xmlDocs));
-            Task saveHtml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await updateWikiPageRecordsTask));
+            Task saveHtml = _epubOutput.SaveDocumentsAsync(directoryPaths, (await updateHtmlInWikiRecordsTask));
             Task.WaitAll(saveXml, saveHtml, createMime, downloadImagesTask);
             await _epubOutput.ZipFiles(directoryPaths, guid);
         }

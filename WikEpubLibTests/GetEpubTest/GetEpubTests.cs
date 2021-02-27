@@ -27,7 +27,7 @@ namespace WikEpubLibTests
 
             var htmlParser = new HtmlParser();
             var getRecords = new GetWikiPageRecords();
-            var getXmlDocument = new GetXmlDocs(new GetTocXml(), new GetContentXml(), new GetContainerXml());
+            var getXmlDocument = new CreateXmlDocs(new GetTocXml(), new GetContentXml(), new GetContainerXml());
             var epubOut = new EpubOutput(new System.Net.Http.HttpClient());
             _getEpub = new GetEpub(htmlParser, getRecords, getXmlDocument, mockHtmlInput, epubOut);
             await createTestBook();
