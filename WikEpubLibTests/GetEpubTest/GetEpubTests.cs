@@ -1,29 +1,27 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WikEpubLib.IO;
-using WikEpubLib.CreateDocs;
-using WikEpubLib.Records;
-using WikEpubLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
+using WikEpubLib;
+using WikEpubLib.CreateDocs;
+using WikEpubLib.IO;
+using WikEpubLib.Records;
 using WikEpubLibTests.GetEpubTest;
-using HtmlAgilityPack;
 
 namespace WikEpubLibTests
 {
     [TestClass]
     public class GetEpubTests
     {
-        
         private GetEpub _getEpub;
+
         [TestInitialize]
         public async Task Init()
         {
-            string htmlString = 
+            string htmlString =
                 File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\htmlString.txt");
             var mockHtmlInput = new MockHtmlInput(htmlString);
 
@@ -33,8 +31,8 @@ namespace WikEpubLibTests
             var epubOut = new EpubOutput(new System.Net.Http.HttpClient());
             _getEpub = new GetEpub(htmlParser, getRecords, getXmlDocument, mockHtmlInput, epubOut);
             await createTestBook();
-
         }
+
         async private Task createTestBook()
         {
             string rootDirPath = @"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\TestOutput\";
@@ -51,19 +49,11 @@ namespace WikEpubLibTests
             directoryInfo.GetDirectories().ToList().ForEach(dir => dir.Delete(true));
         }
 
-      
-        //[TestMethod]
-        //async public Task Does_Not_Throw_Error()
-        //{
-        //    await createTestBook();
-        //}
-
         private DirectoryInfo GetTestOutputDirInfo() => new DirectoryInfo(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\TestOutput\");
 
         [TestMethod]
         public void Creates_File_In_Directory()
         {
-            //await createTestBook();
             var directoryInfo = GetTestOutputDirInfo();
             var directoryFiles = directoryInfo.GetFiles().ToList();
             Assert.AreEqual(1, directoryFiles.Count);
@@ -72,16 +62,14 @@ namespace WikEpubLibTests
         [TestMethod]
         public void Creates_Epub_File_in_Directory()
         {
-            //await createTestBook();
             var directoryInfo = GetTestOutputDirInfo();
             var directoryFiles = directoryInfo.GetFiles().ToList();
             var fileExt = directoryFiles[0].Extension;
             Assert.AreEqual(".epub", fileExt);
         }
-    
+
         private DirectoryInfo GetUnzippedEpubDirectory()
         {
-            //await createTestBook();
             var directoryInfo = GetTestOutputDirInfo();
             var epubFile = directoryInfo.GetFiles().ToList().First();
             File.Move(epubFile.FullName, Path.ChangeExtension(epubFile.FullName, ".zip"));
@@ -89,12 +77,12 @@ namespace WikEpubLibTests
             var zipFile = GetTestOutputDirInfo().GetFiles().ToList().First();
             var unzippedDir =
                 @"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\TestOutput\UnzipFolder";
-            
+
             ZipFile.ExtractToDirectory(
-                zipFile.FullName, 
+                zipFile.FullName,
                 unzippedDir
             );
-            return new DirectoryInfo(unzippedDir); 
+            return new DirectoryInfo(unzippedDir);
         }
 
         [TestMethod]
@@ -132,12 +120,11 @@ namespace WikEpubLibTests
             var metaInfDir = dirInfo.GetDirectories().First(dir => dir.Name == "META-INF");
             var containerXML = metaInfDir.GetFiles().First();
             var containerXmlText = File.ReadAllText(containerXML.FullName);
-            var expectedContainerXmlText = 
+            var expectedContainerXmlText =
                 File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\containerXml.txt");
             Assert.AreEqual(expectedContainerXmlText, containerXmlText);
         }
 
-        
         [TestMethod]
         public void Epub_File_Contains_Correct_Num_Img_Files()
         {
@@ -162,7 +149,7 @@ namespace WikEpubLibTests
                 .First(dir => dir.Name == "OEBPS")
                 .GetDirectories()
                 .First(dir => dir.Name == "image_repo");
-            
+
             var imageFiles = imgRepoDir
                 .GetFiles()
                 .ToList()
@@ -177,7 +164,6 @@ namespace WikEpubLibTests
             });
         }
 
-       
         [TestMethod]
         public void Epub_File_Contains_ContentOPF()
         {
@@ -189,7 +175,6 @@ namespace WikEpubLibTests
             Assert.AreEqual("content.opf", contentOPFFile.Name);
         }
 
-       
         [TestMethod]
         public void ContentOPF_is_Correct()
         {
@@ -199,12 +184,11 @@ namespace WikEpubLibTests
                 .First(dir => dir.Name == "OEBPS");
             var contentOPFFile = OEBPSDir.GetFiles().First(file => file.Name == "content.opf");
             var contentOPFText = File.ReadAllText(contentOPFFile.FullName);
-            var expectedContentOPFText = 
+            var expectedContentOPFText =
                 File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\ContentOPF.txt");
             Assert.AreEqual(expectedContentOPFText, contentOPFText);
         }
 
-        
         [TestMethod]
         public void Epub_File_Contains_HTML()
         {
@@ -229,7 +213,7 @@ namespace WikEpubLibTests
                 File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\epubHtml.txt");
             Assert.AreEqual(expectedHtmlText, htmlFileText);
         }
-       
+
         [TestMethod]
         public void Epub_File_Contains_Toc()
         {
@@ -253,14 +237,5 @@ namespace WikEpubLibTests
             var expectedTocText = File.ReadAllText(@"C:\Users\User\Documents\Code\WebDev\WikEpub\WikEpubLibTests\GetEpubTest\Resources\toc.txt");
             Assert.AreEqual(expectedTocText, tocText);
         }
-
- 
-
- 
-
-
-       
-
-        
     }
 }
