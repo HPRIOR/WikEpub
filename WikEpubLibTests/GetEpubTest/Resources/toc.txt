@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <head>
+    <meta name="cover" content="cover" />
+  </head>
+  <docTitle>
+    <text>testbook</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="Benzocfluorene" playOrder="1">
+      <navLabel>
+        <text>Benzocfluorene</text>
+      </navLabel>
+      <content src="Benzocfluorene.html" />
+      <navPoint id="Benzocfluorene" playOrder="2">
+        <navLabel>
+          <text>Structure and reactivity</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Structure_and_reactivity" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="3">
+        <navLabel>
+          <text>Synthesis</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Synthesis" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="4">
+        <navLabel>
+          <text>Metabolism</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Metabolism" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="5">
+        <navLabel>
+          <text>Mechanism of action</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Mechanism_of_action" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="6">
+        <navLabel>
+          <text>Environmental exposure</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Environmental_exposure" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="7">
+        <navLabel>
+          <text>Safety</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#Safety" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="8">
+        <navLabel>
+          <text>See also</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#See_also" />
+      </navPoint>
+      <navPoint id="Benzocfluorene" playOrder="9">
+        <navLabel>
+          <text>References</text>
+        </navLabel>
+        <content src="Benzocfluorene.html#References" />
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

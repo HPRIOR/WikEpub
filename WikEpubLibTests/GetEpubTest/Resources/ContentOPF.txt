@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<package version="2.0" unique-identifier="bookid" xmlns="http://www.idpf.org/2007/opf">
+  <metadata>
+    <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">testbook</dc:title>
+    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Wikipedia</dc:publisher>
+    <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">27-2-2021</dc:date>
+    <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Harry Prior</dc:creator>
+    <meta name="cover" content="cover-image" />
+  </metadata>
+  <manifest>
+    <item id="cover" href="cover.html" media-type="application/xhtml+xml" />
+    <item id="ncxtoc" href="toc.ncx" media-type="application/dtbncx+xml" />
+    <item id="Benzocfluorene" href="Benzocfluorene.html" media-type="application/xhtml+xml" />
+    <item id="image_1" href="image_repo\image_1.svg.png" media-type="image/png" />
+    <item id="image_2" href="image_repo\image_2.png.png" media-type="image/png" />
+    <item id="image_3" href="image_repo\image_3.svg.png" media-type="image/png" />
+    <item id="image_4" href="image_repo\image_4.svg.png" media-type="image/png" />
+    <item id="image_5" href="image_repo\image_5.svg.png" media-type="image/png" />
+    <item id="image_6" href="image_repo\image_6.svg.png" media-type="image/png" />
+    <item id="image_7" href="image_repo\image_7.png.png" media-type="image/png" />
+    <item id="image_8" href="image_repo\image_8.png.png" media-type="image/png" />
+    <item id="image_9" href="image_repo\image_9.png.png" media-type="image/png" />
+    <item id="image_10" href="image_repo\image_10.png.png" media-type="image/png" />
+    <item id="image_11" href="image_repo\image_11.png.png" media-type="image/png" />
+  </manifest>
+  <spine toc="ncxtoc">
+    <itemref idref="cover" />
+    <itemref idref="Benzocfluorene" />
+  </spine>
+</package>
