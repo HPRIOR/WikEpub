@@ -65,7 +65,7 @@ namespace WikEpubLib
             var pageRecords = htmlRecordTuple.Select(t => t.record);
 
             // Use the tuples to produce the files needed to create the epub document: images + xml
-            Task downloadImages = Task.WhenAll(pageRecords.SelectMany(record => _epubOutput.DownLoadImages(record, directoryPaths)));
+            Task downloadImages = Task.WhenAll(pageRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
             var xmlDocs = Task.WhenAll(_getXmlDocs.From(pageRecords, bookTitle));
             var parsedDocuments = Task.WhenAll(htmlRecordTuple.Select(t => (_parseHtml.ParseAsync(t.doc, t.record))));
 
