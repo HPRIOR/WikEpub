@@ -95,11 +95,11 @@ namespace WikEpubLib.IO
         /// Overloaded save method to handle HTML files.
         /// </summary>
         /// <param name="directories"></param>
-        /// <param name="htmlDocs"></param>
+        /// <param name="wikiRecord"></param>
         /// <returns></returns>
         public async Task SaveDocumentsAsync(Dictionary<Directories, string> directories,
-            IEnumerable<(HtmlDocument doc, WikiPageRecord record)> htmlDocs) =>
-            await Task.WhenAll(htmlDocs.Select(t => SaveTaskAsync(t.doc, directories[Directories.OEBPS], $"{t.record.Id}.html")));
+            IEnumerable< WikiPageRecord> wikiRecord) =>
+            await Task.WhenAll(wikiRecord.Select(record => SaveTaskAsync(record.htmlDoc, directories[Directories.OEBPS], $"{record.Id}.html")));
 
         private async Task SaveTaskAsync(XDocument file, string toDirectory, string withFileName)
         {
