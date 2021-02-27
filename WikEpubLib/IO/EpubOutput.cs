@@ -74,45 +74,7 @@ namespace WikEpubLib.IO
                 await memoryStream.CopyToAsync(fileStream);
             });
 
-        /// <summary>
-        /// Saves documents to specied directory depending on the type of file
-        /// </summary>
-        /// <param name="directories"></param>
-        /// <param name="xmlDocs"></param>
-        /// <returns></returns>
-        public async Task SaveDocumentsAsync(Dictionary<Directories, string> directories, IEnumerable<(XmlType type, XDocument doc)> xmlDocs) =>
-            await Task.WhenAll(
-                xmlDocs.Select(t => t.type switch
-                {
-                    XmlType.Container => SaveTaskAsync(t.doc, directories[Directories.METAINF], "container.xml"),
-                    XmlType.Content => SaveTaskAsync(t.doc, directories[Directories.OEBPS], "content.opf"),
-                    XmlType.Toc => SaveTaskAsync(t.doc, directories[Directories.OEBPS], "toc.ncx"),
-                    _ => throw new ArgumentException("Unknown XML type found in xml switch expression")
-                })
-                );
-
-        /// <summary>
-        /// Overloaded save method to handle HTML files.
-        /// </summary>
-        /// <param name="directories"></param>
-        /// <param name="wikiRecord"></param>
-        /// <returns></returns>
-        public async Task SaveDocumentsAsync(Dictionary<Directories, string> directories,
-            IEnumerable< WikiPageRecord> wikiRecord) =>
-            await Task.WhenAll(wikiRecord.Select(record => SaveTaskAsync(record.htmlDoc, directories[Directories.OEBPS], $"{record.Id}.html")));
-
-        private async Task SaveTaskAsync(XDocument file, string toDirectory, string withFileName)
-        {
-            await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
-            await file.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
-        }
-
-        private async Task SaveTaskAsync(HtmlDocument file, string toDirectory, string withFileName)
-        {
-            await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
-            await Task.Run(() => file.Save(stream));
-        }
-
+        
         public async Task ZipFiles(Dictionary<Directories, string> directories, Guid bookId) =>
             await Task.Run(() =>
             {
