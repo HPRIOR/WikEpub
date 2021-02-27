@@ -1,14 +1,11 @@
-﻿using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using WikEpubLib.Enums;
 using WikEpubLib.Records;
 
@@ -74,7 +71,6 @@ namespace WikEpubLib.IO
                 await memoryStream.CopyToAsync(fileStream);
             });
 
-        
         public async Task ZipFiles(Dictionary<Directories, string> directories, Guid bookId) =>
             await Task.Run(() =>
             {

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Xml.Linq;
-using WikEpubLib.Enums;
 using WikEpubLib.Interfaces;
 
 namespace WikEpubLib.CreateDocs
@@ -10,7 +9,7 @@ namespace WikEpubLib.CreateDocs
         public async Task<IDocument> CreateContainerDoc(string filePath)
         {
             XNamespace defaultNs = "urn:oasis:names:tc:opendocument:xmlns:container";
-            return await Task.Run(() => new ContainerDoc( new XDocument(
+            return await Task.Run(() => new ContainerDoc(new XDocument(
               new XElement(
                   defaultNs + "container",
                   new XElement(

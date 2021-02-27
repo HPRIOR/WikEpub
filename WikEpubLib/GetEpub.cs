@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using WikEpubLib.CreateDocs;
 using WikEpubLib.Enums;
 using WikEpubLib.Interfaces;
-using WikEpubLib.Records;
 
 namespace WikEpubLib
 {
@@ -18,14 +17,14 @@ namespace WikEpubLib
     {
         private readonly IHtmlInput _htmlInput;
         private readonly IGetWikiPageRecords _getRecords;
-        private readonly IDocumentCreator _getXmlDocs;
+        private readonly IDocumentCreator _getDocs;
         private readonly IEpubOutput _epubOutput;
 
         public GetEpub(IGetWikiPageRecords getRecords,
             IDocumentCreator getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
         {
             _getRecords = getRecords;
-            _getXmlDocs = getXmlDocs;
+            _getDocs = getXmlDocs;
             _htmlInput = htmlInput;
             _epubOutput = epubOutput;
         }
@@ -53,18 +52,17 @@ namespace WikEpubLib
             var directoryPaths = GetDirectoryContext(rootDirectory, guid);
             var createDirectoriesTask = _epubOutput.CreateDirectoriesAsync(directoryPaths);
 
-            var initialHtmlRecords =
+            var wikiPageRecords =
                (await getHtmlDocsTask).Select(doc => _getRecords.From(doc, "image_repo")).ToList();
-
-            var downloadImagesTask = 
-                Task.WhenAll(initialHtmlRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
-
-            var createDocsTask = Task.WhenAll(_getXmlDocs.From(initialHtmlRecords, bookTitle, directoryPaths));
+            var downloadImagesTask =
+                Task.WhenAll(wikiPageRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
+            var createDocsTask = Task.WhenAll(_getDocs.From(wikiPageRecords, bookTitle, directoryPaths));
 
             // Save the produced files to relevant directory and compress them
             await createDirectoriesTask;
             var saveDocumentsTask = DocumentSaver.Save(await createDocsTask);
             var createMimeTask = _epubOutput.CreateMimeFile(directoryPaths);
+
             Task.WaitAll(saveDocumentsTask, createMimeTask, downloadImagesTask);
             await _epubOutput.ZipFiles(directoryPaths, guid);
         }

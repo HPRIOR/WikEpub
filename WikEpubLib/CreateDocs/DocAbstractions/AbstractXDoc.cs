@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -14,6 +10,7 @@ namespace WikEpubLib.CreateDocs
     {
         protected XDocument _document;
         protected string _directory;
+
         public AbstractXDoc(XDocument document, string directory)
         {
             _document = document;
@@ -27,6 +24,5 @@ namespace WikEpubLib.CreateDocs
             await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
             await file.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
         }
-
     }
 }

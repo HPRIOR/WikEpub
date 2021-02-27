@@ -16,16 +16,14 @@ namespace WikEpubLib.CreateDocs
     /// </remarks>
     public class CreateEpubHtml : IEpubHtmlCreator
     {
-
         public async Task<IDocument> CreateHtmlDoc(WikiPageRecord wikiPageRecord, string filePath)
         {
             return await Task.Run(() =>
             {
-                return new HtmlDoc(CreateHtml(wikiPageRecord), filePath, wikiPageRecord);                
+                return new HtmlDoc(CreateHtml(wikiPageRecord), filePath, wikiPageRecord);
             });
         }
 
-      
         public HtmlDocument CreateHtml(WikiPageRecord wikiPageRecord)
         {
             HtmlDocument newDocument = new HtmlDocument();
@@ -100,6 +98,5 @@ namespace WikEpubLib.CreateDocs
                     imgNode.SetAttributeValue("src", srcMap[oldSrcValue]);
             });
         }
-
-            }
+    }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using WikEpubLib.Enums;
 using WikEpubLib.Interfaces;
 using WikEpubLib.Records;
 

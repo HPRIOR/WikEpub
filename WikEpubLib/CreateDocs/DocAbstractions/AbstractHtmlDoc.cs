@@ -1,9 +1,5 @@
 ﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WikEpubLib.Interfaces;
 
@@ -13,6 +9,7 @@ namespace WikEpubLib.CreateDocs
     {
         protected HtmlDocument _document;
         protected string _directory;
+
         public AbstractHtmlDoc(HtmlDocument document, string directory)
         {
             _document = document;
@@ -26,6 +23,5 @@ namespace WikEpubLib.CreateDocs
             await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
             await Task.Run(() => file.Save(stream));
         }
-
     }
 }

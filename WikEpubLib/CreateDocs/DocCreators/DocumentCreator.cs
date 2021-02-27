@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using System.Linq;
+using System.Threading.Tasks;
 using WikEpubLib.Enums;
 using WikEpubLib.Interfaces;
 using WikEpubLib.Records;
@@ -19,9 +18,9 @@ namespace WikEpubLib.CreateDocs
         private readonly IEpubHtmlCreator _epubHtmlCreator;
 
         public DocumentCreator(
-            ITocDocCreator tocDocCreator, 
-            IContentDocCreator contentDocCreator, 
-            IContainerDocCreator containerDocCreator, 
+            ITocDocCreator tocDocCreator,
+            IContentDocCreator contentDocCreator,
+            IContainerDocCreator containerDocCreator,
             IEpubHtmlCreator epubHtmlCreator
             )
         {
@@ -36,14 +35,19 @@ namespace WikEpubLib.CreateDocs
         /// </summary>
         /// <param name="wikiRecords"></param>
         /// <param name="bookTitle"></param>
-        /// <returns>IEnumberable of Task<tuples>: type of xml file which is used by saving functons elsewhere to determine the directory of the file, and the actual document </returns>
-        public IEnumerable<Task<IDocument>> From(IEnumerable<WikiPageRecord> wikiRecords, string bookTitle, IDictionary<Directories, string> directories) {
+        /// <returns></returns>
+        public IEnumerable<Task<IDocument>> From(
+            IEnumerable<WikiPageRecord> wikiRecords,
+            string bookTitle,
+            IDictionary<Directories, string> directories
+            )
+        {
             return new List<Task<IDocument>>()
             {
                 _containerDocCreator.CreateContainerDoc(directories[Directories.METAINF]),
                 _contentDocCreator.CreateContentDoc(wikiRecords, bookTitle, directories[Directories.OEBPS]),
                 _tocDocCreator.CreateTocDoc(wikiRecords, bookTitle, directories[Directories.OEBPS]),
-            }.Concat(wikiRecords.Select(record => _epubHtmlCreator.CreateHtmlDoc(record, directories[Directories.OEBPS]))); 
+            }.Concat(wikiRecords.Select(record => _epubHtmlCreator.CreateHtmlDoc(record, directories[Directories.OEBPS])));
         }
-     }
+    }
 }
