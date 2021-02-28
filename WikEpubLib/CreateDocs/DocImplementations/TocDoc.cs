@@ -11,7 +11,7 @@ namespace WikEpubLib.CreateDocs
 
         public async override Task SaveAsync()
         {
-            await SaveTaskAsync(_document, _directory, "toc.ncx");
+            await SaveTaskAsync(_document, "toc.ncx");
         }
     }
 }

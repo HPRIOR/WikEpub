@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <package version="2.0" unique-identifier="bookid" xmlns="http://www.idpf.org/2007/opf">
   <metadata>
     <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">testbook</dc:title>
     <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Wikipedia</dc:publisher>
-    <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">27-2-2021</dc:date>
+    <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">28-2-2021</dc:date>
     <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Harry Prior</dc:creator>
     <meta name="cover" content="cover-image" />
   </metadata>

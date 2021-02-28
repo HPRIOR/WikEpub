@@ -11,7 +11,7 @@ namespace WikEpubLib.CreateDocs
 
         public async override Task SaveAsync()
         {
-            await SaveTaskAsync(_document, _directory, "container.xml");
+            await SaveTaskAsync(_document, "container.xml");
         }
     }
 }

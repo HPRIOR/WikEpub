@@ -15,7 +15,7 @@ namespace WikEpubLib.CreateDocs
 
         public async override Task SaveAsync()
         {
-            await SaveTaskAsync(_document, _directory, $"{_wikiRecord.Id}.html");
+            await SaveTaskAsync(_document, $"{_wikiRecord.Id}.html");
         }
     }
 }

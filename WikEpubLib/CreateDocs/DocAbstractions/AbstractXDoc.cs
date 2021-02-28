@@ -19,9 +19,9 @@ namespace WikEpubLib.CreateDocs
 
         abstract public Task SaveAsync();
 
-        protected async Task SaveTaskAsync(XDocument file, string toDirectory, string withFileName)
+        protected async Task SaveTaskAsync(XDocument file, string withFileName)
         {
-            await using Stream stream = File.Create($"{toDirectory}/{withFileName}");
+            await using Stream stream = File.Create($"{_directory}/{withFileName}");
             await file.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
         }
     }
