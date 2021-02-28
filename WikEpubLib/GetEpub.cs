@@ -66,7 +66,6 @@ namespace WikEpubLib
             await createDirectories;
             var saveDocuments = DocumentSaver.Save(await createEpubDocuments);
             var createMimeType = _epubOutput.CreateMimeFile(directoryPaths);
-
             Task.WaitAll(saveDocuments, createMimeType, downloadImages);
             await _epubOutput.ZipFiles(directoryPaths, guid);
         }
