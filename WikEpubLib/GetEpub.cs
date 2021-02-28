@@ -17,14 +17,17 @@ namespace WikEpubLib
     {
         private readonly IHtmlInput _htmlInput;
         private readonly IGetWikiPageRecords _getRecords;
-        private readonly IDocumentCreator _getDocs;
+        private readonly IDocumentCreator _getEpubDocs;
         private readonly IEpubOutput _epubOutput;
 
-        public GetEpub(IGetWikiPageRecords getRecords,
-            IDocumentCreator getXmlDocs, IHtmlInput htmlInput, IEpubOutput epubOutput)
+        public GetEpub(
+            IGetWikiPageRecords getRecords,
+            IDocumentCreator getEpubDocs, 
+            IHtmlInput htmlInput, 
+            IEpubOutput epubOutput)
         {
             _getRecords = getRecords;
-            _getDocs = getXmlDocs;
+            _getEpubDocs = getEpubDocs;
             _htmlInput = htmlInput;
             _epubOutput = epubOutput;
         }
@@ -47,27 +50,29 @@ namespace WikEpubLib
         /// <returns></returns>
         public async Task FromAsync(IEnumerable<string> urls, string rootDirectory, string bookTitle, Guid guid)
         {
-            var getHtmlDocsTask = _htmlInput.GetHtmlDocumentsFromAsync(urls, new HtmlWeb());
+            var htmlDocs = _htmlInput.GetHtmlDocumentsFromAsync(urls, new HtmlWeb());
 
             var directoryPaths = GetDirectoryContext(rootDirectory, guid);
-            var createDirectoriesTask = _epubOutput.CreateDirectoriesAsync(directoryPaths);
+            var createDirectories = _epubOutput.CreateDirectoriesAsync(directoryPaths);
 
             var wikiPageRecords =
-               (await getHtmlDocsTask).Select(doc => _getRecords.From(doc, "image_repo")).ToList();
-            var downloadImagesTask =
+               (await htmlDocs).Select(doc => _getRecords.From(doc, "image_repo")).ToList();
+            var downloadImages =
                 Task.WhenAll(wikiPageRecords.SelectMany(record => _epubOutput.DownloadImages(record, directoryPaths)));
-            var createDocsTask = Task.WhenAll(_getDocs.From(wikiPageRecords, bookTitle, directoryPaths));
+            
+            var createEpubDocuments = Task.WhenAll(_getEpubDocs.From(wikiPageRecords, bookTitle, directoryPaths));
 
             // Save the produced files to relevant directory and compress them
-            await createDirectoriesTask;
-            var saveDocumentsTask = DocumentSaver.Save(await createDocsTask);
-            var createMimeTask = _epubOutput.CreateMimeFile(directoryPaths);
+            await createDirectories;
+            var saveDocuments = DocumentSaver.Save(await createEpubDocuments);
+            var createMimeType = _epubOutput.CreateMimeFile(directoryPaths);
 
-            Task.WaitAll(saveDocumentsTask, createMimeTask, downloadImagesTask);
+            Task.WaitAll(saveDocuments, createMimeType, downloadImages);
             await _epubOutput.ZipFiles(directoryPaths, guid);
         }
 
-        private Dictionary<Directories, string> GetDirectoryContext(string rootDir, Guid folderId) => new Dictionary<Directories, string> {
+        private Dictionary<Directories, string> GetDirectoryContext(string rootDir, Guid folderId) => 
+            new Dictionary<Directories, string> {
             {Directories.ROOT, rootDir},
             {Directories.OEBPS, @$"{rootDir}\{folderId}\OEBPS" },
             {Directories.METAINF, @$"{rootDir}\{folderId}\META-INF" },
